@@ -1,0 +1,7 @@
+setup.py
+mssql_cs/__init__.py
+mssql_cs/mssql.py
+mssql_cs.egg-info/PKG-INFO
+mssql_cs.egg-info/SOURCES.txt
+mssql_cs.egg-info/dependency_links.txt
+mssql_cs.egg-info/top_level.txt
