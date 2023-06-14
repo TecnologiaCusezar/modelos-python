@@ -1,0 +1,9 @@
+setup.py
+entidades_cs/__init__.py
+entidades_cs/entity.py
+entidades_cs/salesforce_entity.py
+entidades_cs/sql_entity.py
+entidades_cs.egg-info/PKG-INFO
+entidades_cs.egg-info/SOURCES.txt
+entidades_cs.egg-info/dependency_links.txt
+entidades_cs.egg-info/top_level.txt
