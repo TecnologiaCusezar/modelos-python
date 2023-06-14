@@ -1,1 +1,0 @@
-from cartera import *

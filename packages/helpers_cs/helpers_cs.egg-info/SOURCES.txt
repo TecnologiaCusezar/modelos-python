@@ -1,7 +1,0 @@
-setup.py
-helpers_cs/__init__.py
-helpers_cs/helpers.py
-helpers_cs.egg-info/PKG-INFO
-helpers_cs.egg-info/SOURCES.txt
-helpers_cs.egg-info/dependency_links.txt
-helpers_cs.egg-info/top_level.txt
