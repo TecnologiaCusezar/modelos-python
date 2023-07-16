@@ -3,6 +3,7 @@ from helpers_cs import resolve_env
 from helpers_cs import to_json
 import requests
 import pandas as pd
+import hashlib
 
 
 class SalesforceEntity(Entity):
@@ -34,13 +35,19 @@ class SalesforceEntity(Entity):
     # Consulta SOQL
     soql_path = '/services/data/v52.0/query?&q='
     soql_query = None
+    where: str = None
+    order_by: str = None
 
-    def __init__(self, entity: str = None, fields: list = None) -> None:
+    def __init__(self, entity: str = None, fields: list = None, query: str = None, where: str = None, order_by: str = None) -> None:
         # Instancia el servicio de salesforce
 
         #
-        if entity != None:
-            self.entityName = entity
+        self.soql_query = query
+        self.where = where
+        self.order_by = order_by
+        self.entityName = entity
+
+        #
         super().__init__(fields)
 
         #
@@ -70,10 +77,10 @@ class SalesforceEntity(Entity):
         # Se construye una consulta SOQL
         query = 'SELECT '
 
-        if len(self.fields) > 1:
-            query += ', '.join(self.fields)
-        elif len(self.fields) == 1:
-            query += self.fields[0]
+        if len(self.getFields()) > 1:
+            query += ', '.join(self.getFields())
+        elif len(self.getFields()) == 1:
+            query += self.getFields()[0]
         else:
             query += 'FIELDS(ALL)'
             require_limit = True
@@ -86,9 +93,14 @@ class SalesforceEntity(Entity):
         #
         # Para futuras versiones incluir comprobación de filtros
         #
+        if self.where != None:
+            query += ' WHERE ' + self.where
 
         if self.data_limit != None or require_limit:
             query += ' LIMIT ' + str(self.data_limit or 200)
+
+        if self.order_by != None:
+            query += ' ORDER BY ' + str(self.order_by)
 
         return query
 
@@ -125,3 +137,6 @@ class SalesforceEntity(Entity):
 
     def _fill_data(self) -> None:
         self._data = self.executeQuery()
+
+    def _signature(self) -> str:
+        return str(hashlib.md5(self.getQuery().encode()).hexdigest())

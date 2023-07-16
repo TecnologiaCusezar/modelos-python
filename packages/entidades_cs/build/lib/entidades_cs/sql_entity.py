@@ -1,5 +1,6 @@
 from .entity import Entity
 from mssql_cs import DB
+import hashlib
 
 
 class SQLEntity(Entity):
@@ -7,8 +8,12 @@ class SQLEntity(Entity):
     # de una entidad SQL
 
     # Conexión sql
-    def __init__(self, table: str = None, fields: list = None) -> None:
+    def __init__(self, table: str = None, fields: list = None, query: str = None, where: str = None) -> None:
         #
+
+        #
+        self.query = query
+        self.where = where
 
         #
         if table != None:
@@ -21,6 +26,7 @@ class SQLEntity(Entity):
 
     # ConsultaSQL
     query = None
+    where = None
 
     def selectQuery(self) -> str:
         if self.query != None:
@@ -29,10 +35,10 @@ class SQLEntity(Entity):
         # Se construye una consulta SOQL
         query = 'SELECT '
 
-        if len(self.fields) > 1:
-            query += ', '.join(self.fields)
-        elif len(self.fields) == 1:
-            query += self.fields[0]
+        if len(self.getFields()) > 1:
+            query += ', '.join(self.getFields())
+        elif len(self.getFields()) == 1:
+            query += self.getFields()[0]
         else:
             query += '*'
 
@@ -44,6 +50,9 @@ class SQLEntity(Entity):
         #
         # Para futuras versiones incluir comprobación de filtros
         #
+        if self.where != None:
+            query += ' WHERE ' + self.where
+
         return query
 
     def _fill_data(self) -> None:
@@ -53,3 +62,6 @@ class SQLEntity(Entity):
             dataframe = dataframe.take(self.data_limit)
 
         self._data = dataframe
+
+    def _signature(self) -> str:
+        return str(hashlib.md5(self.selectQuery().encode()).hexdigest())
